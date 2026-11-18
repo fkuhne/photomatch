@@ -1,0 +1,487 @@
+<!doctype html>
+<!--
+  Photomatch's landing page (plan step 2.46, record 0020). Served by GitHub Pages from the
+  releases repository's gh-pages branch. app/scripts/publish-site.sh fills in the tokens in double braces
+  from the release itself, copies the icon from the app, and pushes it. It loads nothing from any
+  other site: no fonts, scripts, analytics or cookies.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photomatch · Cull your photos faster</title>
+<meta name="description" content="Photomatch is a free beta for photographers, on macOS and Windows: a fast grid for your RAW photos, culling from the keyboard, and your picks, stars and labels handed to Lightroom and Capture One. It never changes your photos.">
+<meta property="og:title" content="Photomatch · Cull your photos faster">
+<meta property="og:description" content="A fast grid for your RAW photos, culling from the keyboard, and your choices handed to Lightroom and Capture One. Free beta for macOS and Windows.">
+<meta property="og:image" content="https://fkuhne.github.io/photomatch-releases/assets/grid.jpg">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/png" href="assets/icon-32.png">
+<link rel="apple-touch-icon" href="assets/icon-256.png">
+<style>
+:root {
+  --bg: #f4f4f6;
+  --bg-alt: #ebebef;
+  --surface: #ffffff;
+  --text: #1c1c1e;
+  --muted: #5c5c62;
+  --faint: #8e8e94;
+  --line: #dcdce1;
+  --accent: #e0953f;
+  --accent-text: #1c1c1e;
+  --link: #a35c14;
+  --blue: #2f6fd8;
+  --teal: #2fae8e;
+  --pick: #3f9a4f;
+  --glow: rgba(47, 111, 216, .14);
+  --glow-2: rgba(47, 174, 142, .12);
+  --shadow: 0 28px 60px -24px rgba(20, 20, 30, .38), 0 0 0 1px rgba(20, 20, 30, .07);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161618;
+    --bg-alt: #1c1c1e;
+    --surface: #242426;
+    --text: #ececee;
+    --muted: #a2a2a8;
+    --faint: #76767c;
+    --line: #333336;
+    --link: #f0b46e;
+    --glow: rgba(47, 111, 216, .22);
+    --glow-2: rgba(47, 174, 142, .16);
+    --shadow: 0 30px 80px -24px rgba(0, 0, 0, .85), 0 0 0 1px rgba(255, 255, 255, .07);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161618;
+  --bg-alt: #1c1c1e;
+  --surface: #242426;
+  --text: #ececee;
+  --muted: #a2a2a8;
+  --faint: #76767c;
+  --line: #333336;
+  --link: #f0b46e;
+  --glow: rgba(47, 111, 216, .22);
+  --glow-2: rgba(47, 174, 142, .16);
+  --shadow: 0 30px 80px -24px rgba(0, 0, 0, .85), 0 0 0 1px rgba(255, 255, 255, .07);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+kbd {
+  font: 600 .82em/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  display: inline-block;
+  min-width: 1.7em;
+  padding: .28em .45em;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  color: var(--text);
+}
+h1, h2, h3 { line-height: 1.15; letter-spacing: -.02em; margin: 0; }
+h2 { font-size: clamp(28px, 4.2vw, 40px); font-weight: 750; }
+h3 { font-size: 17px; font-weight: 650; letter-spacing: -.01em; }
+p { margin: 0; }
+.wrap { max-width: 1140px; margin: 0 auto; padding: 0 16px; }
+@media (min-width: 720px) { .wrap { padding: 0 32px; } }
+section { padding: 88px 0; }
+.eyebrow {
+  display: inline-block;
+  font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.lede { color: var(--muted); font-size: 18px; max-width: 640px; margin-top: 16px; }
+.head { margin-bottom: 44px; }
+.head.center { text-align: center; }
+.head.center .lede { margin-left: auto; margin-right: auto; }
+
+/* The bar of links */
+nav {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px);
+  backdrop-filter: saturate(1.4) blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--text); letter-spacing: -.01em; }
+.brand:hover { text-decoration: none; }
+.brand img { width: 30px; height: 30px; }
+.nav-links { display: flex; gap: 22px; margin-left: auto; align-items: center; font-size: 14.5px; }
+.nav-links a:not(.btn) { color: var(--muted); display: none; }
+.nav-links a:not(.btn):hover { color: var(--text); text-decoration: none; }
+@media (min-width: 820px) { .nav-links a:not(.btn) { display: inline; } }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 11px 18px; border-radius: 11px;
+  font-weight: 650; font-size: 15px; line-height: 1.2;
+  color: var(--text); background: var(--surface);
+  border: 1px solid var(--line);
+  transition: transform .15s ease, border-color .15s ease, background .15s ease;
+}
+.btn:hover { text-decoration: none; border-color: var(--faint); transform: translateY(-1px); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+.btn.primary:hover { background: color-mix(in srgb, var(--accent) 88%, #fff); }
+.btn.small { padding: 7px 13px; font-size: 14px; border-radius: 9px; }
+.btn svg { flex: none; }
+.btn .sub { display: block; font-weight: 500; font-size: 12.5px; opacity: .72; margin-top: 2px; }
+
+/* The top of the page */
+.hero { padding: 72px 0 40px; position: relative; text-align: center; }
+.hero::before {
+  content: ""; position: absolute; inset: -60px 0 auto; height: 620px; z-index: -1;
+  background:
+    radial-gradient(520px 320px at 30% 30%, var(--glow), transparent 70%),
+    radial-gradient(520px 320px at 72% 40%, var(--glow-2), transparent 70%);
+}
+.hero h1 { font-size: clamp(38px, 6.6vw, 68px); font-weight: 800; letter-spacing: -.035em; max-width: 900px; margin: 0 auto; }
+.hero h1 .soft { color: var(--muted); }
+.hero .lede { margin: 22px auto 0; font-size: clamp(17px, 2.1vw, 20px); max-width: 700px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 13px; margin-bottom: 26px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface);
+  font-size: 13.5px; color: var(--muted);
+}
+.pill b { color: var(--text); font-weight: 650; }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+.downloads { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 34px; }
+.downloads .btn { text-align: left; padding: 13px 20px; min-width: 248px; }
+.fine { color: var(--faint); font-size: 13.5px; margin-top: 16px; }
+
+.shot { margin: 56px auto 0; max-width: 1080px; }
+.shot img, .shot .placeholder { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: var(--shadow); }
+.shot figcaption { color: var(--faint); font-size: 13.5px; margin-top: 16px; text-align: center; }
+.placeholder {
+  aspect-ratio: 16 / 10; display: grid; place-items: center;
+  background: repeating-linear-gradient(45deg, var(--bg-alt) 0 14px, var(--surface) 14px 28px);
+  color: var(--faint); font-size: 15px;
+}
+
+/* Features */
+.alt { background: var(--bg-alt); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .grid.three { grid-template-columns: repeat(3, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 24px; }
+.card p { color: var(--muted); margin-top: 8px; font-size: 15.5px; }
+.icon {
+  width: 40px; height: 40px; border-radius: 10px; margin-bottom: 16px;
+  display: grid; place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.icon.blue { color: var(--blue); background: color-mix(in srgb, var(--blue) 14%, transparent); }
+.icon.teal { color: var(--teal); background: color-mix(in srgb, var(--teal) 15%, transparent); }
+
+/* A section with a screenshot beside its text */
+.split { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 960px) { .split { grid-template-columns: 5fr 7fr; gap: 56px; } }
+.split .shot { margin: 0; }
+.points { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; }
+.points li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; color: var(--muted); }
+.points li b { color: var(--text); font-weight: 650; }
+.points svg { color: var(--pick); margin-top: 3px; }
+
+/* What's coming */
+.coming .card { position: relative; overflow: hidden; }
+.coming .card::after {
+  content: ""; position: absolute; inset: 0 0 auto; height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+}
+.note { color: var(--faint); font-size: 14px; margin-top: 22px; text-align: center; }
+
+/* Install */
+.os { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.os .btn { margin-left: auto; }
+.req { color: var(--faint); font-size: 14px; }
+ol.steps { padding: 0; margin: 20px 0 0; list-style: none; counter-reset: s; display: grid; gap: 14px; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 12px; color: var(--muted); font-size: 15.5px; }
+ol.steps li::before {
+  content: counter(s);
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 13px; font-weight: 700; color: var(--text);
+  background: var(--bg-alt); border: 1px solid var(--line);
+}
+ol.steps b { color: var(--text); font-weight: 650; }
+.after { margin-top: 24px; color: var(--muted); text-align: center; }
+
+/* Problems */
+.report { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 860px) { .report { grid-template-columns: 1fr auto; } }
+.report p { color: var(--muted); margin-top: 12px; max-width: 640px; }
+
+footer { border-top: 1px solid var(--line); padding: 36px 0 48px; color: var(--faint); font-size: 13.5px; }
+footer .row { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; }
+footer .row + .row { margin-top: 14px; }
+footer .links { margin-left: auto; display: flex; gap: 18px; }
+footer a { color: var(--muted); }
+footer p { max-width: 820px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Photomatch, to the top">
+      <img src="assets/icon-128.png" alt="" width="30" height="30">Photomatch
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#compare">Compare</a>
+      <a href="#coming">Coming</a>
+      <a href="#install">Install</a>
+      <a href="#problems">Report a problem</a>
+      <a class="btn primary small" href="#install" data-download>Download</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="pill"><span class="dot"></span><b>Free beta</b> · macOS and Windows · version 0.2.2</div>
+    <h1>Sort your photos faster, <span class="soft">and keep the ones you love.</span></h1>
+    <p class="lede">Photomatch opens a folder of RAW photos in a fast grid, lets you pick, reject, star and label them from the keyboard, and hands your choices to Lightroom and Capture One. It never changes your photos, and nothing leaves your computer.</p>
+    <div class="downloads">
+      <a class="btn" href="https://github.com/fkuhne/photomatch-releases/releases/download/v0.2.2/Photomatch_0.2.2_aarch64.dmg" data-os="mac">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.4 12.6c0-2.4 2-3.6 2.1-3.7-1.1-1.7-2.9-1.9-3.5-1.9-1.5-.2-2.9.9-3.7.9-.8 0-1.9-.9-3.2-.8-1.6 0-3.1 1-4 2.4-1.7 3-.4 7.4 1.2 9.8.8 1.2 1.8 2.5 3 2.4 1.2 0 1.7-.8 3.1-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8 0 0-2.5-1-2.5-3.9zM14 5.5c.7-.8 1.1-1.9 1-3-1 0-2.1.7-2.8 1.5-.6.7-1.2 1.8-1 2.9 1 .1 2.1-.6 2.8-1.4z"/></svg>
+        <span>Download for Mac<span class="sub">Apple silicon · .dmg · 6.1 MB</span></span>
+      </a>
+      <a class="btn" href="https://github.com/fkuhne/photomatch-releases/releases/download/v0.2.2/Photomatch_0.2.2_x64-setup.exe" data-os="windows">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2 4.3 10 3.2v7.7H2V4.3zm0 15.4 8 1.1v-7.6H2v6.5zM11 3l11-1.5v9.4H11V3zm0 18 11 1.5v-9.4H11V21z"/></svg>
+        <span>Download for Windows<span class="sub">64-bit · installer · 3.0 MB</span></span>
+      </a>
+    </div>
+    <p class="fine">Free while in beta. Not signed by Apple or Microsoft yet, so the first launch takes one more click: <a href="#install">see how</a>.</p>
+
+    <figure class="shot">
+      <img src="assets/grid.jpg" width="2400" height="1538" alt="Photomatch's grid: a folder of landscape and street photos as thumbnails, some picked with stars and colour labels, with the side panel's sort and filters on the right.">
+      <figcaption>The grid, with the side panel's sort and filters. Every mark on a thumbnail is a key away.</figcaption>
+    </figure>
+  </div>
+</header>
+
+<section class="alt" id="features">
+  <div class="wrap">
+    <div class="head center">
+      <span class="eyebrow">What the beta does</span>
+      <h2>From a full card to the keepers.</h2>
+      <p class="lede">Everything you need to cull a shoot before you import it, with your hands on the keyboard.</p>
+    </div>
+    <div class="grid three">
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <h3>A grid that keeps up</h3>
+        <p>Thumbnails come from the previews your camera already stores, so a folder of thousands opens fast. Each keeps its photo's shape, and <kbd>+</kbd> <kbd>−</kbd> make them larger or smaller.</p>
+      </div>
+      <div class="card">
+        <div class="icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M11 8v6M8 11h6"/></svg></div>
+        <h3>Sharp, to full resolution</h3>
+        <p>The large view is as sharp as your screen. A click zooms in where you clicked, as far as the photo's full resolution, to check focus on an eye.</p>
+      </div>
+      <div class="card">
+        <div class="icon teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg></div>
+        <h3>Cull at keyboard speed</h3>
+        <p><kbd>P</kbd> picks, <kbd>X</kbd> rejects, <kbd>1</kbd>–<kbd>5</kbd> give stars and <kbd>6</kbd>–<kbd>9</kbd> colour labels, on one photo or a hundred at once. <kbd>⌘Z</kbd> or <kbd>Ctrl+Z</kbd> undoes.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="8.5" height="14" rx="1.5"/><rect x="13" y="5" width="8.5" height="14" rx="1.5"/></svg></div>
+        <h3>Compare up to four</h3>
+        <p>Similar frames side by side, zoomed and moved together. Pick the one, and the others step aside.</p>
+      </div>
+      <div class="card">
+        <div class="icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4L3 5z"/></svg></div>
+        <h3>Find any photo</h3>
+        <p>Sort by capture time, stars, pick or label. Filter by date, camera, lens, ISO, aperture, shutter speed, focal length and more.</p>
+      </div>
+      <div class="card">
+        <div class="icon teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h12M12 6l6 6-6 6"/><path d="M20 4v16"/></svg></div>
+        <h3>Straight to Lightroom</h3>
+        <p>Your picks, stars and labels are saved as you go, in an XMP file beside each RAW file, where Lightroom Classic and Capture One read them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap split">
+    <div>
+      <span class="eyebrow">Compare</span>
+      <h2>Ten frames of one moment? Keep the best.</h2>
+      <p class="lede">Select them and press <kbd>C</kbd>. Up to four show side by side; a click zooms every one at the same spot, and dragging moves them together.</p>
+      <ul class="points">
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b><kbd>P</kbd> chooses one:</b> it picks the outlined photo and unpicks the others.</span></li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b><kbd>X</kbd> rejects it,</b> and the next photo takes its place. <kbd>⌘Z</kbd> or <kbd>Ctrl+Z</kbd> brings it back.</span></li>
+        <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg><span><b>Want two?</b> <kbd>Shift</kbd>+<kbd>P</kbd> picks one and leaves the rest as they are.</span></li>
+      </ul>
+    </div>
+    <figure class="shot">
+      <img src="assets/compare.jpg" width="2400" height="1537" alt="Photomatch's Compare: four similar photos side by side, the active one outlined.">
+    </figure>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="head center">
+      <span class="eyebrow">Your photos stay yours</span>
+      <h2>Built around your files.</h2>
+    </div>
+    <div class="grid three">
+      <div class="card">
+        <div class="icon teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h3>It never changes a photo</h3>
+        <p>Photomatch only reads your files. Ratings go into the XMP file beside a RAW file, keeping whatever else Lightroom wrote there.</p>
+      </div>
+      <div class="card">
+        <div class="icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.7M20 12a8 8 0 0 1-13.7 5.7"/><path d="m3 3 18 18"/></svg></div>
+        <h3>Nothing leaves your computer</h3>
+        <p>No account, no cloud, no upload. Photomatch works offline and never connects to the internet, not even to check for updates.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg></div>
+        <h3>RAW and more</h3>
+        <p>RAW files from Sony first, and from Canon, Nikon, Fujifilm, Panasonic, Olympus and Pentax; DNG; and JPEG, PNG, TIFF and WebP. A RAW shot with a JPEG shows once.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="coming" id="coming">
+  <div class="wrap">
+    <div class="head center">
+      <span class="eyebrow">Coming next</span>
+      <h2>Next, it learns your taste.</h2>
+      <p class="lede">The beta is the start. Later versions will look at the photos themselves, on your computer, and help you choose.</p>
+    </div>
+    <div class="grid three">
+      <div class="card">
+        <div class="icon blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg></div>
+        <h3>Learns what you like</h3>
+        <p>It shows you two photos, and you pick one. Every pick teaches it your taste, not a generic idea of a good photo, and it ranks the rest of your library by it.</p>
+      </div>
+      <div class="card">
+        <div class="icon teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3>Spots the misses</h3>
+        <p>Blur, closed eyes and bad exposure, found for you, and the best one or two frames of a burst set apart.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+        <h3>Finds a photo by what's in it</h3>
+        <p>Type "foggy street at dusk" or "kid laughing", or ask for photos like this one, across your whole library.</p>
+      </div>
+    </div>
+    <p class="note">Plans, not promises: what comes first depends on what testers tell us.</p>
+  </div>
+</section>
+
+<section class="alt" id="install">
+  <div class="wrap">
+    <div class="head center">
+      <span class="eyebrow">Install</span>
+      <h2>Up and running in a minute.</h2>
+      <p class="lede">Photomatch isn't signed by Apple or Microsoft yet, so your computer asks you once to confirm you trust it.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="os"><h3>macOS</h3><a class="btn small" href="https://github.com/fkuhne/photomatch-releases/releases/download/v0.2.2/Photomatch_0.2.2_aarch64.dmg" data-os="mac">Download .dmg</a></div>
+        <p class="req">Apple silicon: M1 or later.</p>
+        <ol class="steps">
+          <li><span>Open the <b>.dmg</b>, and drag Photomatch to <b>Applications</b>.</span></li>
+          <li><span>Open Photomatch. macOS says it can't check it for malicious software, because Photomatch isn't signed by Apple. Click <b>Done</b>.</span></li>
+          <li><span>Open <b>System Settings → Privacy &amp; Security</b>. Near the bottom, it says Photomatch was blocked: click <b>Open Anyway</b>, and enter your password.</span></li>
+          <li><span>Open Photomatch again, and click <b>Open</b>. From then on it opens as any other app.</span></li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="os"><h3>Windows</h3><a class="btn small" href="https://github.com/fkuhne/photomatch-releases/releases/download/v0.2.2/Photomatch_0.2.2_x64-setup.exe" data-os="windows">Download installer</a></div>
+        <p class="req">64-bit Windows.</p>
+        <ol class="steps">
+          <li><span>Run the <b>-setup.exe</b> installer.</span></li>
+          <li><span>Windows may say it protected your PC, because the installer isn't signed. Click <b>More info</b>, then <b>Run anyway</b>.</span></li>
+          <li><span>Follow the installer. It installs Photomatch for you alone, and needs no administrator's password.</span></li>
+        </ol>
+      </div>
+    </div>
+    <p class="after">To update, download the new version and install it over the old one; your ratings and settings stay. Every version is on the <a href="https://github.com/fkuhne/photomatch-releases/releases">releases page</a>.</p>
+  </div>
+</section>
+
+<section id="problems">
+  <div class="wrap report">
+    <div>
+      <span class="eyebrow">Problems and ideas</span>
+      <h2>Something wrong? Tell us.</h2>
+      <p>This is a beta, and things may break. Open an issue: say what you did, what you expected and what happened, with your computer and its system. <b>Help → Diagnostics</b> in Photomatch shows what it measured; copy its text into the issue.</p>
+    </div>
+    <a class="btn primary" href="https://github.com/fkuhne/photomatch-releases/issues">Report a problem or an idea</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="#top"><img src="assets/icon-128.png" alt="" width="22" height="22">Photomatch 0.2.2</a>
+      <div class="links">
+        <a href="https://github.com/fkuhne/photomatch-releases/releases">Releases</a>
+        <a href="https://github.com/fkuhne/photomatch-releases/issues">Issues</a>
+      </div>
+    </div>
+    <div class="row">
+      <p>© 2026 Felipe Kühne. Free to use during the beta, provided as is, without warranty. Photomatch sends nothing off your computer; this page sets no cookies and counts no visitors.</p>
+    </div>
+    <div class="row">
+      <p>Built with Tauri, React, LibRaw, Adobe's XMP Toolkit and other open-source libraries. LibRaw is used under the CDDL 1.0, and its source comes with each release. The photos in the screenshots are the author's.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Put the visitor's own system first and make its button the main one. Without this, both show alike.
+(function () {
+  var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  var os = /mac/i.test(p) ? "mac" : /win/i.test(p) ? "windows" : "";
+  if (!os) return;
+  document.querySelectorAll('.downloads [data-os="' + os + '"]').forEach(function (a) {
+    a.classList.add("primary");
+    a.parentNode.insertBefore(a, a.parentNode.firstChild);
+  });
+  var top = document.querySelector('.downloads [data-os="' + os + '"]');
+  var nav = document.querySelector("nav [data-download]");
+  if (top && nav) {
+    nav.href = top.href;
+    nav.textContent = os === "mac" ? "Download for Mac" : "Download for Windows";
+  }
+})();
+// A screenshot not taken yet shows as a marked space, for previews before step 2.46 ends.
+document.querySelectorAll(".shot img").forEach(function (img) {
+  img.addEventListener("error", function () {
+    var d = document.createElement("div");
+    d.className = "placeholder";
+    d.textContent = "Screenshot to come: " + img.getAttribute("src");
+    img.replaceWith(d);
+  });
+});
+</script>
+</body>
+</html>
