@@ -8,7 +8,7 @@ Photomatch never changes your photos, and sends nothing off your computer.
 
 ## Installing
 
-Download the installer for your computer from [Photomatch's page](https://fkuhne.github.io/photomatch-releases/), or from the newest release, at the top of the [releases](../../releases).
+Download the installer for your computer from [Photomatch's page](https://fkuhne.github.io/photomatch/), or from the newest release, at the top of the [releases](../../releases).
 
 **macOS** (Apple silicon: M1 or later):
 1. Open the `.dmg`, and drag Photomatch to Applications.
