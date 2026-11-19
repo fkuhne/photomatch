@@ -27,6 +27,12 @@ To update, download the new release and install it over the old one. Your rating
 
 Open an [issue](../../issues): say what you did, what you expected and what happened, with your computer and its OS. **Help → Diagnostics** in Photomatch shows what it measured; you can copy its text into the issue.
 
+## Licence and privacy
+
+Photomatch is free to use during its beta, under [its licence](LICENSE.txt).
+
+Photomatch works only on your computer. It never connects to the internet: no account, no tracking, and nothing about you or your photos is sent anywhere. Help → Check for Updates opens a page in your browser, telling it only which version you have.
+
 ## Open-source parts
 
 Photomatch is built with Tauri, React, LibRaw, Adobe's XMP Toolkit and other open-source libraries. LibRaw is used under the CDDL 1.0; its source, as Photomatch builds it, comes with each release.
