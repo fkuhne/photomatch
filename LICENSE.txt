@@ -1,0 +1,9 @@
+Photomatch beta licence
+
+You may install and use Photomatch free of charge, on your own computers, while it's in beta.
+
+Photomatch is provided as is, without warranty of any kind. Its author isn't liable for any loss or damage from its use, including loss of photos, ratings or time. Photomatch never changes your photo files, but keep backups of your photos all the same.
+
+You may not sell, rent or pass on copies of Photomatch, nor change, decompile or reverse-engineer it, except where the law allows. The open-source libraries it includes keep their own licences, listed in its notices.
+
+© 2026 Felipe Kühne. All rights reserved.
